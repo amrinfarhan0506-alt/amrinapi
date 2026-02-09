@@ -1,0 +1,32 @@
+require("dotenv").config()
+const express=require("express")
+const cors=require ("cors")
+const bodyparser=require("body-parser")
+
+const adRoutes=require("./routes/admin.routes")
+const catRoutes=require("./routes/category.routes")
+const stateRoutes=require("./routes/state.routes")
+const cityRoutes=require("./routes/city.routes")
+const hpRoutes=require("./routes/hospital.routes")
+const spRoutes=require("./routes/specialization.routes")
+const hproRoutes=require("./routes/hospro.routes")
+const docRoutes=require("./routes/doctor.routes")
+const testRoutes=require("./routes/test.routes")
+
+const app=express()
+app.use(cors())
+app.use(bodyparser.json())
+
+app.use('/api/admin',adRoutes)
+app.use('/api/category',catRoutes)
+app.use('/api/state',stateRoutes)
+app.use('/api/city',cityRoutes)
+app.use('/api/hospital',hpRoutes)
+app.use('/api/specialization',spRoutes)
+app.use('/api/hospro',hproRoutes)
+app.use('/api/doctor',docRoutes)
+app.use('/api/test',testRoutes)
+
+
+PORT=process.env.PORT||5000;
+app.listen(PORT,()=>console.log(`server is running on ${PORT}`));

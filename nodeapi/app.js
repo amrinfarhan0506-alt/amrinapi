@@ -12,6 +12,7 @@ const spRoutes=require("./routes/specialization.routes")
 const hproRoutes=require("./routes/hospro.routes")
 const docRoutes=require("./routes/doctor.routes")
 const testRoutes=require("./routes/test.routes")
+const disRoutes=require("./routes/diseases.routes")
 
 const app=express()
 app.use(cors())
@@ -26,6 +27,7 @@ app.use('/api/specialization',spRoutes)
 app.use('/api/hospro',hproRoutes)
 app.use('/api/doctor',docRoutes)
 app.use('/api/test',testRoutes)
+app.use('/api/diseases',disRoutes)
 
 
 PORT=process.env.PORT||5000;

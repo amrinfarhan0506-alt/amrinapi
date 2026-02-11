@@ -1,74 +1,117 @@
-/*const db=require("../config/db")
-
-//select query by id
-function getHproById(req,res)
-{
-    const {id}=req.params
-    db.query(`Select hp.hpro_id,h.hpname,hp.hp_img
-        from hospro as hp
-        inner join hospital as h 
-        on hp.hpid=h.hpid
-        where hpid=?`,[id],(err,result)=>
+const db=require("../config/db")
+const multer=require("multer")
+const path=require("path")
+const fs=require("fs")
+const storage=multer.diskStorage({
+    destination:function(req,file,cb)
     {
-        if(err)
-        {
-            return res.status(500).json(err)
-        }
-        if(result.length==0)
-        {
-            return res.json({Message:"No Record Found"})
-        }
-        return res.json(result[0])
-    })
-}
-//insert query for hospital
+        cb(null,"hospital_image")
+    },
+    filename:function(req,file,cb)
+    {
+        cb(null,Date.now()+path.extname(file.originalname))
+    }
+})
+const upload=multer({storage}).single("hp_img")
+
 function insertHpro(req,res)
 {
-    const {hp}=req.body
-    db.query(`Insert into hospital(hpname,hp_address,email,contact,
-        regno,ctid) 
-        values(?,?,?,?,?,?)`,
-        [hpname,hp_address,email,contact,regno,ctid],(err)=>
-    {
+    upload(req,res,function(err){
         if(err)
         {
             return res.status(500).json(err)
         }
-        return res.json({Message:"Record inserted successfully"})
+        const {hpid}=req.body
+        const {filename}=req.file
+        db.query(`Insert into hospro(hpid,hp_img) values(?,?)`,[hpid,filename],(err)=>
+        {
+            if(err)
+                return res.status(500).json(err)
+            return res.status(200).json({Message:"Data inserted successfully"})
+        })
     })
 }
-//update query for hospital
+
 function updateHpro(req,res)
 {
-    const {id}=req.params
-    const {hp_name,ctid,hp_address,email,contact,regno,updatedon,updatedby,isActive}=req.body
-    db.query(`Update hospital set hpname=?,hp_address=?,email=?,contact=?,
-        regno=?,ctid=?,updatedon=?,updatedby=?,isActive=? where hpid=?`,[hp_name,ctid,hp_address,email,contact,regno,updatedon,updatedby,isActive,id],(err)=>
-    {
+    upload(req,res,function(err){
         if(err)
         {
             return res.status(500).json(err)
         }
-        return res.json({Message:"Record updated successfully"})
+        const {hpro_id}=req.params
+        let filepath="/gitpractice/amrinapi/nodeapi/hospital_image/"
+        db.query(`Select hp_img from hospro where hpro_id=?`,[hpro_id],(err,result)=>{
+            if(err)
+                return res.status(500).json(err)
+            const oimg=result[0].hp_img
+            
+            if(oimg)                    
+            {
+                filepath=filepath+oimg
+                ///hospital_image/
+                if(fs.existsSync(filepath))
+                {       
+                    fs.unlinkSync(filepath)
+                }              
+            }
+
+            const {hpid}=req.body
+            const filename=req.file.filename 
+            db.query(`Update hospro set hp_img=?,hpid=? where hpro_id=?`,
+                [filename,hpid,hpro_id],(err,result)=>
+            {
+                if(err)
+                    return res.status(500).json(err)
+                return res.status(200).json({Message:"Data updated successfully"})
+            })
+        })
+
+        
     })
 }
-*/
-function imgUpload(req,res)
+    
+
+function getHproById(req,res)
 {
-    if(!req.file)
-    {
-        return res.status(500).json({message:"No file uploaded"})
-    }
-    return res.status(200).json({message:"File uploaded successfully",filename:req.file.filename})
+    const id=req.params.id 
+
+    db.query(`Select hpro.hp_img,h.hpname from hospro as hpro 
+        inner join hospital as h on hpro.hpid=h.hpid where hpro_id=?`,[id],(err,result)=>
+   
+    
+    
+        {
+            if(err)
+            {
+                return res.status(500).json(err)
+            }
+            return res.status(200).json(result)
+
+        })
+}
+
+function removeHpro(req,res)
+{
+    const id=req.params.id 
+    db.query(`Update hospro set isActive=0 where hpro_id=?`,[id],(err)=>
+   
+    
+    
+        {
+            if(err)
+            {
+                return res.status(500).json(err)
+            }
+            return res.status(200).json({message:"Record deleted"})
+
+        })
 }
 
 
-module.exports=
-{
- /*   
-    getHproById,
+module.exports={
     insertHpro,
     updateHpro,
-    */
-    imgUpload
+    getHproById,
+    removeHpro
 }

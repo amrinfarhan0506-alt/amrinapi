@@ -37,10 +37,10 @@ function getCityById(req,res)
 //insert query for city
 function insertCity(req,res)
 {
-    const {sid,ctname,createdon,createdby,updatedon,updatedby,isActive}=req.body
-    db.query(`Insert into city(sid,ctname,createdon,createdby,updatedon,updatedby,isActive) 
-        values(?,?,?,?,?,?,?)`,
-        [sid,ctname,createdon,createdby,updatedon,updatedby,isActive],(err)=>
+    const {sid,ctname,createdon,createdby,isActive}=req.body
+    db.query(`Insert into city(sid,ctname,createdon,createdby,isActive) 
+        values(?,?,?,?,?)`,
+        [sid,ctname,createdon,createdby,isActive],(err)=>
     {
         if(err)
         {

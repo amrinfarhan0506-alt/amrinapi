@@ -2,10 +2,11 @@ const db=require("../config/db")
 //Select query for hospital
 function getAllDoc(req,res)
 {
-    db.query(`Select d.dname,d.email,d.exp,d.quali,h.hpname
+    db.query(`Select d.dname,d.email,d.exp,d.quali,h.hpname,s.spname
         from doctor as d
-        inner join hospital as h 
-        on d.hpid=h.hpid`,(err,result)=>
+        inner join hospital as h on d.hpid=h.hpid
+        inner join specialization as s on s.spid=d.spid
+        `,(err,result)=>
     {
         if(err)
         {
@@ -19,10 +20,10 @@ function getAllDoc(req,res)
 function getDocById(req,res)
 {
     const {id}=req.params
-    db.query(`Select d.dname,d.email,d.exp,d.quali,h.hpname
+    db.query(`Select d.dname,d.email,d.exp,d.quali,h.hpname,s.spname
         from doctor as d
-        inner join hospital as h 
-        on d.hpid=h.hpid
+        inner join hospital as h on d.hpid=h.hpid
+        inner join specialization as s on s.spid=d.spid
         where did=?`,[id],(err,result)=>
     {
         if(err)
@@ -39,10 +40,10 @@ function getDocById(req,res)
 //insert query for doctor
 function insertDoc(req,res)
 {
-    const {dname,email,contact,hpid,exp,spid,quali,createdon,createdby,updatedon,updatedby,isActive}=req.body
-    db.query(`Insert into doctor(dname,email,contact,hpid,exp,spid,quali,createdon,createdby,updatedon,updatedby,isActive) 
-        values(?,?,?,?,?,?,?,?,?,?,?,?)`,
-        [dname,email,contact,hpid,exp,spid,quali,createdon,createdby,updatedon,updatedby,isActive],(err)=>
+    const {dname,email,contact,hpid,exp,spid,quali,createdon,createdby,isActive}=req.body
+    db.query(`Insert into doctor(dname,email,contact,hpid,exp,spid,quali,createdon,createdby,isActive) 
+        values(?,?,?,?,?,?,?,?,?,?)`,
+        [dname,email,contact,hpid,exp,spid,quali,createdon,createdby,isActive],(err)=>
     {
         if(err)
         {

@@ -13,6 +13,9 @@ const hproRoutes=require("./routes/hospro.routes")
 const docRoutes=require("./routes/doctor.routes")
 const testRoutes=require("./routes/test.routes")
 const disRoutes=require("./routes/diseases.routes")
+const docproRoutes=require("./routes/docpro.routes")
+const causeRoutes=require("./routes/cause.routes")
+const factorRoutes=require("./routes/factor.routes")
 
 const app=express()
 app.use(cors())
@@ -28,6 +31,11 @@ app.use('/api/hospro',hproRoutes)
 app.use('/api/doctor',docRoutes)
 app.use('/api/test',testRoutes)
 app.use('/api/diseases',disRoutes)
+app.use('/api/docpro',docproRoutes)
+app.use('/api/cause',causeRoutes)
+app.use('/api/factor',factorRoutes)
+app.use('/hospital_image',express.static('hospital_image'))
+app.use('/doctor_image',express.static('doctor_image'))
 
 
 PORT=process.env.PORT||5000;

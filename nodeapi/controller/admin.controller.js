@@ -11,7 +11,27 @@ function getAll(req,res)
         return res.json(result);
     })
 }
+
+function check(req,res)
+{  
+    const{email,password}=req.body;
+    db.query(`select * from admin
+        where email=? and password=?
+        `,[email,password],(err,result)=>
+    {
+        if(err)
+        {
+            return res.status(500).json(err);
+        }
+
+        if(result.length==0)
+            return res.json({message:false})
+        else
+            return res.json({message:true})
+    })
+}
 module.exports=
 {
-    getAll
+    getAll,
+    check
 }

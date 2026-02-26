@@ -5,25 +5,25 @@ const fs=require("fs")
 const storage=multer.diskStorage({
     destination:function(req,file,cb)
     {
-        cb(null,"hospital_image")
+        cb(null,"doctor_image")
     },
     filename:function(req,file,cb)
     {
         cb(null,Date.now()+path.extname(file.originalname))
     }
 })
-const upload=multer({storage}).single("hp_img")
+const upload=multer({storage}).single("doc_img")
 
-function insertHpro(req,res)
+function insertDpro(req,res)
 {
     upload(req,res,function(err){
         if(err)
         {
             return res.status(500).json(err)
         }
-        const {hpid}=req.body
+        const {did}=req.body
         const filename=req.file.filename
-        db.query(`Insert into hospro(hpid,hp_img) values(?,?)`,[hpid,filename],(err)=>
+        db.query(`Insert into doctorpro(did,doc_img) values(?,?)`,[did,filename],(err)=>
         {
             if(err)
                 return res.status(500).json(err)
@@ -32,34 +32,34 @@ function insertHpro(req,res)
     })
 }
 
-function updateHpro(req,res)
+function updateDpro(req,res)
 {
     upload(req,res,function(err){
         if(err)
         {
             return res.status(500).json(err)
         }
-        const {hpro_id}=req.params
-        let filepath="/gitpractice/amrinapi/nodeapi/hospital_image/"
-        db.query(`Select hp_img from hospro where hpro_id=?`,[hpro_id],(err,result)=>{
+        const {dpro_id}=req.params
+        let filepath="/gitpractice/amrinapi/nodeapi/doctor_image/"
+        db.query(`Select doc_img from doctorpro where dpro_id=?`,[dpro_id],(err,result)=>{
             if(err)
                 return res.status(500).json(err)
-            const oimg=result[0].hp_img
+            const oimg=result[0].doc_img
             
             if(oimg)                    
             {
                 filepath=filepath+oimg
-                ///hospital_image/
+                ///doctor_image/
                 if(fs.existsSync(filepath))
                 {       
                     fs.unlinkSync(filepath)
                 }              
             }
 
-            const {hpid}=req.body
-            const filename=req.file.filename 
-            db.query(`Update hospro set hp_img=?,hpid=? where hpro_id=?`,
-                [filename,hpid,hpro_id],(err,result)=>
+            const {did}=req.body
+            const filename=req.file.filename
+            db.query(`Update doctorpro set doc_img=?,did=? where dpro_id=?`,
+                [filename,did,dpro_id],(err,result)=>
             {
                 if(err)
                     return res.status(500).json(err)
@@ -72,12 +72,12 @@ function updateHpro(req,res)
 }
     
 
-function getHproById(req,res)
+function getDproById(req,res)
 {
     const id=req.params.id 
 
-    db.query(`Select hpro.hp_img,h.hpname from hospro as hpro 
-        inner join hospital as h on hpro.hpid=h.hpid where hpro_id=?`,[id],(err,result)=>
+    db.query(`Select dpro.doc_img,d.dname from doctorpro as dpro 
+        inner join doctor as d on dpro.did=d.did where dpro_id=?`,[id],(err,result)=>
    
     
     
@@ -86,31 +86,39 @@ function getHproById(req,res)
             {
                 return res.status(500).json(err)
             }
+            if(result.length==0)
+                return res.json({messgae:"No record found"})
             return res.status(200).json(result)
 
         })
 }
-
-function getAllHpro(req,res)
+function getAllDpro(req,res)
 {
+    
 
-
-    db.query(`Select * from hospro`,(err,result)=>  
+    db.query(`Select dpro.doc_img,d.dname,d.quali,d.exp from doctorpro as dpro 
+        inner join doctor as d on dpro.did=d.did`,(err,result)=>
+   
+    
+    
         {
             if(err)
             {
                 return res.status(500).json(err)
             }
+            if(result.length==0)
+                return res.json({messgae:"No record found"})
             return res.status(200).json(result)
 
         })
 }
 
 
-function removeHpro(req,res)
+
+function removeDpro(req,res)
 {
     const id=req.params.id 
-    db.query(`Update hospro set isActive=0 where hpro_id=?`,[id],(err)=>
+    db.query(`Update doctorpro set isActive=0 where dpro_id=?`,[id],(err)=>
    
     
     
@@ -126,9 +134,9 @@ function removeHpro(req,res)
 
 
 module.exports={
-    insertHpro,
-    updateHpro,
-    getHproById,
-    removeHpro,
-    getAllHpro
+    insertDpro,
+    updateDpro,
+    getDproById,
+    removeDpro,
+    getAllDpro
 }

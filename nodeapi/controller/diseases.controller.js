@@ -18,7 +18,7 @@ function getDiseasesById(req,res)
     db.query(`select c.catname, d.dname, d.did
         from category as c 
         inner join diseases as d on c.catid = d.catid 
-        where d.did=? `,(err,result)=>
+        where d.did=? `,[id],(err,result)=>
         {
             if(err)
             {
@@ -34,10 +34,10 @@ function getDiseasesById(req,res)
 }
 function InsertDiseases(req,res)
 {
-    const{catid,dname,createdon,createdby,updatedon,updatedby,isActive}=req.body
-    db.query(`insert into diseases(catid,dname,createdon,createdby,updatedon,updatedby,isActive)
-        values(?,?,?,?,?,?,?)`,
-        [catid,dname,createdon,createdby,updatedon,updatedby,isActive],(err)=>
+    const{catid,dname,dis_intro,createdon,createdby,isActive}=req.body
+    db.query(`insert into diseases(catid,dname,dis_intro,createdon,createdby,isActive)
+        values(?,?,?,?,?,?)`,
+        [catid,dname,dis_intro,createdon,createdby,isActive],(err)=>
         {
             if(err)
             {
@@ -61,7 +61,7 @@ function updateDiseases(req,res)
 function removeDiseases(req,res)
 {
     const{id}=req.params
-    db.query(`delete from diseases where did=?`,[did],(err)=>{
+    db.query(`delete from diseases where did=?`,[id],(err)=>{
         if(err)
         {
             return res.status(500).json(err)
@@ -80,6 +80,5 @@ module.exports=
     updateDiseases,
     removeDiseases
 
-    
 
 }

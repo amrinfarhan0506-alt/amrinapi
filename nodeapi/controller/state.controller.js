@@ -24,7 +24,7 @@ function getStateById(req,res)
         }
         if(result.length==0)
         {
-            return res.result({Message:"No Record Found"})
+            return res.json({Message:"No Record Found"})
         }
         return res.json(result)
     })

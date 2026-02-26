@@ -33,10 +33,10 @@ function getSpeById(req,res)
 //insert query for specialization
 function insertSpe(req,res)
 {
-    const {spid,spname,createdon,createdby,updatedon,updatedby,isActive}=req.body
-    db.query(`Insert into specialization(spid,spname,createdon,createdby,updatedon,updatedby,isActive) 
-        values(?,?,?,?,?,?,?)`,
-        [spid,spname,createdon,createdby,updatedon,updatedby,isActive],(err)=>
+    const {spid,spname,createdon,createdby,isActive}=req.body
+    db.query(`Insert into specialization(spid,spname,createdon,createdby,isActive) 
+        values(?,?,?,?,?)`,
+        [spid,spname,createdon,createdby,isActive],(err)=>
     {
         if(err)
         {

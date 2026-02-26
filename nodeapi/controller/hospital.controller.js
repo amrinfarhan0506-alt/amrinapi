@@ -2,29 +2,25 @@ const db=require("../config/db")
 //Select query for hospital
 function getAllHp(req,res)
 {
-    db.query(`Select h.hpname,h.hp_address,h.email,h.contact,
-        h.regno,c.ctname
-        from hospital as h
-        inner join city as c 
-        on h.ctid=c.ctid`,(err,result)=>
+    
+    db.query(`Select h.hpid,h.hpname,h.email,h.contact,h.hp_address,c.ctname from hospital as h
+        inner join city as c on h.ctid=c.ctid`,
+        (err,result)=>
     {
         if(err)
         {
             return res.status(500).json(err)
         }
-        return res.json(result)
+        return res.status(200).json(result)
     })
 }
 
-//select query by id
 function getHpById(req,res)
 {
     const {id}=req.params
     db.query(`Select h.hpname,h.hp_address,h.email,h.contact,
-        h.regno,c.ctname
-        from hospital as h
-        inner join city as c on h.ctid=c.ctid
-        where hpid=?`,[id],(err,result)=>
+        h.regno,c.ctname from hospital as h inner join city as c on c.ctid=h.ctid where hpid=?`,[id],
+        (err,result)=>
     {
         if(err)
         {
@@ -32,11 +28,12 @@ function getHpById(req,res)
         }
         if(result.length==0)
         {
-            return res.json({Message:"No Record Found"})
+            return res.json({Message:"No record found"})
         }
-        return res.json(result[0])
+        return res.json(result)
     })
 }
+
 //insert query for hospital
 function insertHp(req,res)
 {
@@ -92,3 +89,4 @@ module.exports=
     updateHp,
     removeHp
 }
+//h.hp_address,h.email,h.contact,h.regno,

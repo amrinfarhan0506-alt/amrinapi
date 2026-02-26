@@ -33,10 +33,10 @@ function getTestById(req,res)
 //insert query for test
 function insertTest(req,res)
 {
-    const {testname,createdon,createdby,updatedon,updatedby,isActive}=req.body
-    db.query(`Insert into test(testname,createdon,createdby,updatedon,updatedby,isActive) 
-        values(?,?,?,?,?,?)`,
-        [testname,createdon,createdby,updatedon,updatedby,isActive],(err)=>
+    const {testname,createdon,createdby,isActive}=req.body
+    db.query(`Insert into test(testname,createdon,createdby,isActive) 
+        values(?,?,?,?)`,
+        [testname,createdon,createdby,isActive],(err)=>
     {
         if(err)
         {

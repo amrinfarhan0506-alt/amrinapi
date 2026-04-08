@@ -1,84 +1,83 @@
-const db=require("../config/db")
-function getAll(req,res)
-{
-    db.query(`Select c.c_name,d.dname
-         from cause as c
-         inner join diseases as d on d.did=c.did`,(err,result)=>
-        {
-            if(err)
-            {
-                return res.status(500).json(err)
-            }
-            return res.json(result)
+const db = require("../config/db");
 
-         })
+// Get all active causes with disease name
+function getAll(req, res) {
+  db.query(
+    `SELECT c.c_name, c.c_cure, c.c_prevention, c.cause_id, d.dname, c.did
+     FROM cause AS c
+     INNER JOIN diseases AS d ON d.did = c.did
+     WHERE c.isActive = 1`,
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      return res.json(result);
+    }
+  );
 }
 
-
-
-function getcauseById(req,res)
-{
-    const {id}=req.params
-    db.query(`Select c.c_name,d.dname 
-        from cause as c 
-        inner join diseases as d on d.did=c.did 
-        where c.cause_id=?`,[id],(err)=>
-        {
-            if(err)
-            {
-                return res.status(500).json(err)
-            }
-            if(result.length==0)
-            {
-                return res.json({message:"Record not found"})
-            }
-            return res.json(result[0])
-        })
-}
-function Insertcause(req,res)
-{
-    
-    const {cause_name,dname,createdon,createdby,updatedon,updatedby,isActive}=req.body
-    db.query(`insert into cause (c_name,dname,createdon,createdby,updatedon,updatedby,isActive)
-        values(?,?,?,?,?,?,?)`,[cause_name,dname,createdon,createdby,updatedon,updatedby,isActive],(err)=>
-        {
-            if(err)
-            {
-            return res.status(500).json(err)
-            }
-            return res.json({message:"record inserted successfully"})
-        })
+// Get cause by ID
+function getCauseById(req, res) {
+  const { id } = req.params;
+  db.query(
+    `SELECT c.c_name, c.c_cure, c.c_prevention, c.cause_id, d.dname, c.did
+     FROM cause AS c
+     INNER JOIN diseases AS d ON d.did = c.did
+     WHERE c.cause_id = ? AND c.isActive = 1`,
+    [id],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      if (result.length === 0) return res.json({ message: "Record not found" });
+      return res.json(result[0]);
+    }
+  );
 }
 
-function updateCause(req,res)
-{
-    const{id}=req.params
-    const{cause_name}=req.body
-    db.query(`update cause set c_name=? where cause_id=?`,[cause_name,id],(err)=>{
-        if(err)
-        {
-            return res.status(500).json
-        }
-        return res.json({message:"Update record successfully"})
-    })
+// Insert new cause
+function insertCause(req, res) {
+  const { c_name, c_cure, c_prevention, did } = req.body; // frontend sends these
+  db.query(
+    `INSERT INTO cause (c_name, c_cure, c_prevention, did)
+     VALUES (?, ?, ?, ?)`,
+    [c_name, c_cure, c_prevention, did],
+    (err) => {
+      if (err) return res.status(500).json(err);
+      return res.json({ message: "Record inserted successfully" });
+    }
+  );
 }
 
-function removeCause(req,res)
-{
-    const{id}=req.params
-    db.query(`delete from cause where cause_id=?`,[id],(err)=>{
-        if(err)
-        {
-            return res.status(500).json(err)
-        }
-        return res.json({message:"Record deleted successfully"})
-    })
+// Update cause
+function updateCause(req, res) {
+  const { id } = req.params;
+  const { c_name, c_cure, c_prevention, did } = req.body;
+  db.query(
+    `UPDATE cause 
+     SET c_name = ?, c_cure = ?, c_prevention = ?, did = ? 
+     WHERE cause_id = ?`,
+    [c_name, c_cure, c_prevention, did, id],
+    (err) => {
+      if (err) return res.status(500).json(err);
+      return res.json({ message: "Record updated successfully" });
+    }
+  );
 }
 
-module.exports={
-    getAll,
-    getcauseById,
-    Insertcause,
-    updateCause,
-    removeCause
+// Soft delete cause
+function removeCause(req, res) {
+  const { id } = req.params;
+  db.query(
+    `UPDATE cause SET isActive = 0 WHERE cause_id = ?`,
+    [id],
+    (err) => {
+      if (err) return res.status(500).json(err);
+      return res.json({ message: "Record deleted successfully" });
+    }
+  );
 }
+
+module.exports = {
+  getAll,
+  getCauseById,
+  insertCause,
+  updateCause,
+  removeCause,
+};

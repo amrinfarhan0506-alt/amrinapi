@@ -1,71 +1,73 @@
-const db=require("../config/db")
-//api code
-function getAll(req,res)
-{
-    /*wrting query*/
-    db.query ("select b.bid u.uname p.pname from booking as b inner join packages as p on b.bid = p.pid  ",(err,result)=>{
-        if(err)
-            return res.status(500).json(err)
-        return res.json(result);
-    })
-}
-function getbookofpackageById(req,res)
-{
-    const {id}=req.params
-    /*wrting query*/
-    db.query ("select b.bid u.uname p.pname from booking as b inner join packages as p on b.bid = p.pid where nid=?",[id],(err,result)=>{
-        if(err)
-            return res.status(500).json(err)
-        if(result.length==0)
-            return res.json({Message:"record found"});
-        return res.json(result);
-    })
-}
-function insertbookofpackage(req,res)
-{
-    const {fname,lname,contact,email,password,isActive}=req.body
-    /*wrting query*/
-    db.query (`Insert into user(fname,lname,contact,email,password,isActive) values(?.?)`,[fname,lname,contact,email,password,isActive],(err,result)=>{
-        if(err)
-            return res.status(500).json(err)
-        return res.json({Message:"Record inserted successfully"});
-        
-    })
+const db = require("../config/db");
+
+// ==============================
+// GET ALL BOOKINGS (JOIN USER + PACKAGE)
+// ==============================
+function getAll(req, res) {
+  const sql = `
+    SELECT 
+      b.bid,
+      u.uid,
+      CONCAT(u.fname, ' ', u.lname) AS username,
+      u.email,
+      p.pid,
+      p.pname,
+      p.price
+    FROM booking b
+    INNER JOIN user u ON b.uid = u.uid
+    INNER JOIN packages p ON b.pid = p.pid
+  `;
+
+  db.query(sql, (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
 }
 
-function updatebookofpackage(req,res)
-{
-    const {id}=req.params
-    const {fname,lname,contact,email,password,isActive}=req.body
-    /*wrting query*/
-    db.query ("Update user set fname=? where uid=?",[fname,lname,contact,email,password,isActive],(err)=>{
-        if(err)
-            return res.status(500).json(err)
-        return res.json({Message:"Record updated successfully"});
-        
-    })
-}
-//delete query for test
-/*
-function removeuser(req,res)
-{
-    const {id}=req.params
-    db.query("Delete from user where test_id=?",[id],(err)=>
-    {
-        if(err)
-        {
-            return res.status(500).json(err)
-        }
-        return res.json({Message:"Record deleted successfully"})
-    })
-}
-    */
+// ==============================
+// INSERT
+// ==============================
+function insertBooking(req, res) {
+  const { uid, pid } = req.body;
 
-module.exports=
-{
-    getAll,
-    getbookofpackageById,
-    insertbookofpackage,
-    updatebookofpackage,
-    
+  const sql = `INSERT INTO booking (uid, pid) VALUES (?, ?)`;
+
+  db.query(sql, [uid, pid], (err) => {
+    if (err) return res.status(500).json(err);
+    res.json({ message: "Booking added successfully" });
+  });
 }
+
+// ==============================
+// UPDATE
+// ==============================
+function updateBooking(req, res) {
+  const { id } = req.params;
+  const { uid, pid } = req.body;
+
+  const sql = `UPDATE booking SET uid=?, pid=? WHERE bid=?`;
+
+  db.query(sql, [uid, pid, id], (err) => {
+    if (err) return res.status(500).json(err);
+    res.json({ message: "Booking updated successfully" });
+  });
+}
+
+// ==============================
+// DELETE
+// ==============================
+function deleteBooking(req, res) {
+  const { id } = req.params;
+
+  db.query("DELETE FROM booking WHERE bid=?", [id], (err) => {
+    if (err) return res.status(500).json(err);
+    res.json({ message: "Booking deleted successfully" });
+  });
+}
+
+module.exports = {
+  getAll,
+  insertBooking,
+  updateBooking,
+  deleteBooking,
+};

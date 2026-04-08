@@ -2,7 +2,7 @@ const db=require("../config/db")
 //Select query for category
 function getAllCat(req,res)
 {
-    db.query("select * from category",(err,result)=>
+    db.query("select * from category where isActive=1",(err,result)=>
     {
         if(err)
         {
@@ -63,7 +63,7 @@ function updateCat(req,res)
 function removeCat(req,res)
 {
     const {id}=req.params
-    db.query("Delete from category where catid=?",[id],(err)=>
+    db.query("Update  category set isActive=0 where catid=?",[id],(err)=>
     {
         if(err)
         {

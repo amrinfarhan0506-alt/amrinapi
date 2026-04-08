@@ -1,13 +1,20 @@
-const express=require("express")
-const router=express.Router()
-const causeController=require("../controller/cause.controller")
+const express = require("express");
+const router = express.Router();
+const causeController = require("../controller/cause.controller");
 
-router.post('/',causeController.Insertcause)
-router.put('/:id',causeController.updateCause)
-router.get('/:id',causeController.getcauseById)
-router.get('/',causeController.getAll)
-router.delete('/:id',causeController.removeCause)
+// ✅ Get all causes
+router.get("/", causeController.getAll);
 
-module.exports=router
+// ✅ Get cause by ID
+router.get("/:id", causeController.getCauseById);
 
+// ✅ Add new cause
+router.post("/", causeController.insertCause);
 
+// ✅ Update cause
+router.put("/:id", causeController.updateCause);
+
+// ✅ Soft delete cause
+router.patch("/:id", causeController.removeCause);
+
+module.exports = router;

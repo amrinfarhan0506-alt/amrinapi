@@ -29,7 +29,8 @@ useEffect(() => {
       <p><strong>Profile:</strong> General Physician</p>
       <p><strong>Qualification:</strong> {d.quali}</p>
       <p><strong>Experience:</strong>{d.exp}</p>
-      <p>Expert in treating fever, infections, diabetes, and blood pressure with patient‑focused care.</p>
+      <p>Expert in treating fever, infections, diabetes, 
+        and blood pressure with patient‑focused care.</p>
     
         </div>
 

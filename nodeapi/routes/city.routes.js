@@ -7,6 +7,6 @@ router.get('/',ctRouter.getCityAll)
 router.get('/:id',ctRouter.getCityById)
 router.post('/',ctRouter.insertCity)
 router.put('/:id',ctRouter.updateCity)
-router.delete('/:id',ctRouter.removeCity)
+router.patch('/:id',ctRouter.removeCity)
 
 module.exports=router

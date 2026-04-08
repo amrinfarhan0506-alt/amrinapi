@@ -2,7 +2,7 @@ const db=require("../config/db")
 //Select query for test
 function getAllTest(req,res)
 {
-    db.query(`Select * from test`,(err,result)=>
+    db.query(`Select * from test where isActive=1`,(err,result)=>
     {
         if(err)
         {
@@ -33,10 +33,10 @@ function getTestById(req,res)
 //insert query for test
 function insertTest(req,res)
 {
-    const {testname,createdon,createdby,isActive}=req.body
-    db.query(`Insert into test(testname,createdon,createdby,isActive) 
-        values(?,?,?,?)`,
-        [testname,createdon,createdby,isActive],(err)=>
+    const {testname}=req.body
+    db.query(`Insert into test(testname) 
+        values(?)`,
+        [testname],(err)=>
     {
         if(err)
         {
@@ -49,8 +49,8 @@ function insertTest(req,res)
 function updateTest(req,res)
 {
     const {id}=req.params
-    const {testname,updatedon,updatedby,isActive}=req.body
-    db.query("Update test set testname=?,updatedon=?,updatedby=?,isActive=? where test_id=?",[testname,updatedon,updatedby,isActive,id],(err)=>
+    const {testname}=req.body
+    db.query("Update test set testname=? where test_id=?",[testname,id],(err)=>
     {
         if(err)
         {
@@ -64,7 +64,7 @@ function updateTest(req,res)
 function removeTest(req,res)
 {
     const {id}=req.params
-    db.query("Delete from test where test_id=?",[id],(err)=>
+    db.query("Update test set isActive=0 where test_id=?",[id],(err)=>
     {
         if(err)
         {

@@ -5,6 +5,6 @@ router.get('/',catController.getAllCat)
 router.get('/:id',catController.getCatById)
 router.post('/',catController.insertCat)
 router.put('/:id',catController.updateCat)
-router.delete('/:id',catController.removeCat)
+router.patch('/:id',catController.removeCat)
 
 module.exports=router

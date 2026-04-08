@@ -4,7 +4,7 @@ function getCityAll(req,res)
 {
     db.query(`Select c.ctid,c.ctname,s.sname
          from city as c
-         inner join state as s on c.sid=s.sid`,(err,result)=>
+         inner join state as s on c.sid=s.sid where c.isActive=1 and s.isActive=1`,(err,result)=>
     {
         if(err)
         {
@@ -21,7 +21,7 @@ function getCityById(req,res)
     db.query(`Select c.ctid,c.ctname,s.sname
          from city as c
          inner join state as s on c.sid=s.sid 
-         where ctid=?`,[id],(err,result)=>
+         where ctid=? and isActive=1`,[id],(err,result)=>
     {
         if(err)
         {
@@ -37,10 +37,10 @@ function getCityById(req,res)
 //insert query for city
 function insertCity(req,res)
 {
-    const {sid,ctname,createdon,createdby,isActive}=req.body
-    db.query(`Insert into city(sid,ctname,createdon,createdby,isActive) 
-        values(?,?,?,?,?)`,
-        [sid,ctname,createdon,createdby,isActive],(err)=>
+    const {sid,ctname}=req.body
+    db.query(`Insert into city(sid,ctname) 
+        values(?,?)`,
+        [sid,ctname],(err)=>
     {
         if(err)
         {
@@ -68,7 +68,7 @@ function updateCity(req,res)
 function removeCity(req,res)
 {
     const {id}=req.params
-    db.query("Delete from city where ctid=?",[id],(err)=>
+    db.query("update city set isActive=0 where ctid=?",[id],(err)=>
     {
         if(err)
         {

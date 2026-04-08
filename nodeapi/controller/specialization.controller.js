@@ -2,7 +2,7 @@ const db=require("../config/db")
 //Select query for specialization
 function getAllSpe(req,res)
 {
-    db.query(`Select * from specialization`,(err,result)=>
+    db.query(`Select * from specialization where isActive=1`,(err,result)=>
     {
         if(err)
         {
@@ -33,10 +33,10 @@ function getSpeById(req,res)
 //insert query for specialization
 function insertSpe(req,res)
 {
-    const {spid,spname,createdon,createdby,isActive}=req.body
-    db.query(`Insert into specialization(spid,spname,createdon,createdby,isActive) 
-        values(?,?,?,?,?)`,
-        [spid,spname,createdon,createdby,isActive],(err)=>
+    const {spname}=req.body
+    db.query(`Insert into specialization(spname) 
+        values(?)`,
+        [spname],(err)=>
     {
         if(err)
         {
@@ -49,8 +49,8 @@ function insertSpe(req,res)
 function updateSpe(req,res)
 {
     const {id}=req.params
-    const {spname,updatedon,updatedby,isActive}=req.body
-    db.query("Update specialization set spname=?,updatedon=?,updatedby=?,isActive=? where spid=?",[spname,updatedon,updatedby,isActive,id],(err)=>
+    const {spname}=req.body
+    db.query("Update specialization set spname=? where spid=?",[spname,id],(err)=>
     {
         if(err)
         {
@@ -64,7 +64,7 @@ function updateSpe(req,res)
 function removeSpe(req,res)
 {
     const {id}=req.params
-    db.query("Delete from specialization where spid=?",[id],(err)=>
+    db.query("update specialization set isActive=0 where spid=?",[id],(err)=>
     {
         if(err)
         {

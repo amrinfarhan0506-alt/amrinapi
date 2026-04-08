@@ -6,6 +6,6 @@ router.get('/',testController.getAllTest)
 router.get('/:id',testController.getTestById)
 router.post('/',testController.insertTest)
 router.put('/:id',testController.updateTest)
-router.delete('/:id',testController.removeTest)
+router.patch('/:id',testController.removeTest)
 
 module.exports=router

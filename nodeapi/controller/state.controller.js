@@ -2,7 +2,7 @@ const db=require("../config/db")
 //Select query for state
 function getAll(req,res)
 {
-    db.query("Select * from state",(err,result)=>
+    db.query("Select * from state where isActive=1",(err,result)=>
     {
         if(err)
         {
@@ -16,7 +16,7 @@ function getAll(req,res)
 function getStateById(req,res)
 {
     const {id}=req.params
-    db.query("Select * from state where sid=?",[id],(err,result)=>
+    db.query("Select * from state where sid=? and isActive=1",[id],(err,result)=>
     {
         if(err)
         {
@@ -32,10 +32,10 @@ function getStateById(req,res)
 //insert query for state
 function insertState(req,res)
 {
-    const {sname,createdon,createdby,updatedon,updatedby,isActive}=req.body
-    db.query(`Insert into state(sname,createdon,createdby,updatedon,updatedby,isActive) 
-        values(?,?,?,?,?,?)`,
-        [sname,createdon,createdby,updatedon,updatedby,isActive],(err)=>
+    const {sname,createdon,createdby,updatedon,updatedby}=req.body
+    db.query(`Insert into state(sname) 
+        values(?)`,
+        [sname],(err)=>
     {
         if(err)
         {
@@ -48,8 +48,8 @@ function insertState(req,res)
 function updateState(req,res)
 {
     const {id}=req.params
-    const {sname,updatedon,updatedby,isActive}=req.body
-    db.query("Update state set sname=?,updatedon=?,updatedby=?,isActive=? where sid=?",[sname,updatedon,updatedby,isActive,id],(err)=>
+    const {sname}=req.body
+    db.query("Update state set sname=? where sid=?",[sname,id],(err)=>
     {
         if(err)
         {
@@ -63,7 +63,7 @@ function updateState(req,res)
 function removeState(req,res)
 {
     const {id}=req.params
-    db.query("Delete from state where sid=?",[id],(err)=>
+    db.query("update state set isActive=0 where sid=?",[id],(err)=>
     {
         if(err)
         {

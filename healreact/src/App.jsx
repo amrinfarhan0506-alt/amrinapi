@@ -1,32 +1,43 @@
-import { useState, useEffect } from 'react'
-import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
-import './App.css'
-import '../src/assets/Prachi.css'
-import {BrowserRouter, Link, Route, Routes} from 'react-router-dom'
-import Docpro from './admin/docpro'
-import Hospro from './admin/hospro'
-import Sarita from './admin/sarita'
-import Inner from './admin/inner'
+import { Routes, Route, Link, BrowserRouter } from "react-router-dom";
+import Home from "./pages/index";
+import Contact from "./pages/contact";
+import Category from "./pages/category";
+import Login from "./pages/admin/login";
+import Dashboard from "./pages/admin/dashboard";
+import Addservice from "./pages/admin/addservice";
+
 function App() {
-  
-  return(
-    <><BrowserRouter>
-  <Link to='/docpro'>Doctor</Link>
-  <Link to='/hospro'>Hospital</Link>
-  <Link to='/sarita'>Sign In</Link>
-  <Routes>
+  return (
+    <>
+    <BrowserRouter>
+      <nav style={navStyle}>
+        <Link to="/">Home</Link>
+        <Link to="/category/addservices">Category</Link>
+        <Link to="/contact">Contact</Link>
+        <Link to="/admin/login">Admin</Link>
+      </nav>
 
-  <Route path='/' element={<Docpro/>}/>
-  <Route path='/docpro' element={<Docpro/>}/>
-  <Route path='/hospro' element={<Hospro/>}/>
-  <Route path='/sarita' element={<Sarita/>}/>
-  <Route path='/inner' element={<Inner/>}/>
-  </Routes>
-  </BrowserRouter>
-
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/category" element={<Category />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/admin/login" element={<Login />} />
+        <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/admin/services" element={<Addservice />} />
+        
+      </Routes>
+      </BrowserRouter>
 
     </>
-  )
- }
+  );
+  
+}
 
-export default App
+const navStyle = {
+  display: "flex",
+  gap: "20px",
+  padding: "15px",
+  background: "#222",
+};
+
+export default App;

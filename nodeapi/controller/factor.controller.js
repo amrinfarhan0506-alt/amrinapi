@@ -1,87 +1,80 @@
-const db = require("../config/db")
+const db = require("../config/db");
 
-function getALl(req,res)
-{
-    db.query(`select f.fac_id,f.fac_name,c.cause_name
-         from factor as f 
-         inner join cause as c
-         on c.cause_id=f.cause_id`,(err,res)=>
-         {
-            if(err)
-            {
-                return res.status(5000).json(err)
-            }
-            return res.json(result)
-         })
+// Get all active factors with cause name
+function getAll(req, res) {
+  db.query(
+    `SELECT f.fac_id, f.fac_name, c.c_name AS cause_name, f.cause_id
+     FROM factors AS f
+     INNER JOIN cause AS c ON c.cause_id = f.cause_id
+     WHERE f.isActive = 1`,
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      return res.json(result);
+    }
+  );
 }
 
-function getById(req,res)
-{
-    const {id}=req.params
-    db.query(`select f.fac_id,f.fac_name,c.cause_name
-         from factor as f 
-         inner join cause as c
-         on c.cause_id=f.cause_id
-         where f.fac_id=? `,[id],(err)=>
-        {
-            if(err)
-            {
-                return res.status(5000).json(err)
-
-            }
-            if(result.length==0)
-            {
-                return res.json({message:"Record found successfully"})
-            }
-            return res.json(result[0])
-         })
-}
-function InsertFactor(req,res)
-{   const {fac_name,createdon,createdby,updatedon,updatedby,isActive}=req.body
-    db.query(`insert into factor(fac_name,createdon,createdby,updatedon,updatedby.isactive) 
-        values(?,?,?,?,?,?)`,[fac_name,createdon,createdby,updatedon,updatedby,isActive],(err)=>
-        {
-            if(err)
-            {
-                return res.status(5000).json(err)
-            }
-            return res.json({message:"Record insert sucessfully"})
-        })
+// Get factor by ID
+function getById(req, res) {
+  const { id } = req.params;
+  db.query(
+    `SELECT f.fac_id, f.fac_name, c.c_name AS cause_name, f.cause_id
+     FROM factors AS f
+     INNER JOIN cause AS c ON c.cause_id = f.cause_id
+     WHERE f.fac_id = ? AND f.isActive = 1`,
+    [id],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      if (result.length === 0) return res.json({ message: "Record not found" });
+      return res.json(result[0]);
+    }
+  );
 }
 
-function UpdateFactor(req,res)
-{
-    const {id}=req.params
-    const{fac_name}=req.body
-    db.query(`update factor set fac_name=? where fac_id=?`,[fac_name,id],(err)=>
-    {
-        if(err)
-        {
-            return res.status(5000).json(err)
-        }
-        return res.json({message:"Record update successfully"})
-    })
-}
-function DeleteFactor(req,res)
-{
-    const {id}=req.params
-    db.query(`delete from factor where fac_id=?`,[id],(err)=>
-    {
-        if(err)
-        {
-            return res.status(5000).json(err)
-
-        }
-        return res.json({message:"Record deleted successfully"})
-    })
+// Insert new factor
+function insertFactor(req, res) {
+  const { fac_name, cause_id } = req.body; // frontend sends fac_name & cause_id
+  db.query(
+    `INSERT INTO factors (fac_name, cause_id) VALUES (?, ?)`,
+    [fac_name, cause_id],
+    (err) => {
+      if (err) return res.status(500).json(err);
+      return res.json({ message: "Record inserted successfully" });
+    }
+  );
 }
 
-
-module.exports=
-{
-    getALl,
-    getById,
-    InsertFactor,
-    UpdateFactor,
-    DeleteFactor
+// Update factor
+function updateFactor(req, res) {
+  const { id } = req.params;
+  const { fac_name, cause_id } = req.body;
+  db.query(
+    `UPDATE factors SET fac_name = ?, cause_id = ? WHERE fac_id = ?`,
+    [fac_name, cause_id, id],
+    (err) => {
+      if (err) return res.status(500).json(err);
+      return res.json({ message: "Record updated successfully" });
+    }
+  );
 }
+
+// Soft delete factor
+function removeFactor(req, res) {
+  const { id } = req.params;
+  db.query(
+    `UPDATE factors SET isActive = 0 WHERE fac_id = ?`,
+    [id],
+    (err) => {
+      if (err) return res.status(500).json(err);
+      return res.json({ message: "Record deleted successfully" });
+    }
+  );
+}
+
+module.exports = {
+  getAll,
+  getById,
+  insertFactor,
+  updateFactor,
+  removeFactor
+};

@@ -5,8 +5,8 @@ const disrouter= require("../controller/diseases.controller")
  router.get('/',disrouter.getAll)
  router.get('/:id',disrouter. getDiseasesById)
  router.put('/:id',disrouter.updateDiseases)
- router.delete('/:id',disrouter.removeDiseases)
- router.post('/',disrouter.InsertDiseases)
+ router.patch('/:id',disrouter.removeDiseases)
+ router.post('/',disrouter. insertDiseases)
 
  module.exports=router
 

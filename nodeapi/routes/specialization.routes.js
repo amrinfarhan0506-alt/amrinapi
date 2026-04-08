@@ -7,6 +7,6 @@ router.get('/',speController.getAllSpe)
 router.get('/:id',speController.getSpeById)
 router.post('/',speController.insertSpe)
 router.put('/:id',speController.updateSpe)
-router.delete('/:id',speController.removeSpe)
+router.patch('/:id',speController.removeSpe)
 
 module.exports=router

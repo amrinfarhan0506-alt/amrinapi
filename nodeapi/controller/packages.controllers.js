@@ -1,96 +1,127 @@
-const db = require("../config/db")
+const db = require("../config/db");
 
-// Select all packages
-function getAllPackages(req,res)
-{
-    db.query('Select * from packages',(err,result)=>
-    {
-        if(err)
-        {
-            return res.status(500).json(err)
+// ================= GET ALL PACKAGES =================
+function getAllPackages(req, res) {
+    db.query(`
+        SELECT 
+            p.pid,
+            p.pname,
+            p.no_of_test,
+            p.fast,
+            p.reports,
+            p.recommended,
+            p.price,
+            p.test_id,
+            p.hpid,
+            t.testname,
+            h.hpname
+        FROM packages p
+        JOIN test t ON p.test_id = t.test_id
+        JOIN hospital h ON p.hpid = h.hpid
+    `, (err, result) => {
+
+        if (err) {
+            return res.status(500).json(err);
         }
-        return res.json(result)
-    })
+
+        return res.json(result);
+    });
 }
 
 
-// Select package by id
-function getPackageById(req,res)
-{
-    const {id}=req.params
-    db.query('Select * from packages where pid=?',[id],(err,result)=>
-    {
-        if(err)
-        {
-            return res.status(500).json(err)
+// ================= GET PACKAGE BY ID =================
+function getPackageById(req, res) {
+    const { id } = req.params;
+
+    db.query(`
+        SELECT 
+            p.*,
+            t.testname,
+            h.hpname
+        FROM packages p
+        JOIN test t ON p.test_id = t.test_id
+        JOIN hospital h ON p.hpid = h.hpid
+        WHERE p.pid = ?
+    `, [id], (err, result) => {
+
+        if (err) {
+            return res.status(500).json(err);
         }
-        if(result.length==0)
-        {
-            return res.json({Message:"No Record Found"})
+
+        if (result.length === 0) {
+            return res.json({ Message: "No Record Found" });
         }
-        return res.json(result[0])
-    })
+
+        return res.json(result[0]);
+    });
 }
 
 
-// Insert package
-function insertPackage(req,res)
-{
-    const {pname,no_of_test,test_id,fast,hp_id,reports,recommended,price}=req.body
+// ================= INSERT PACKAGE =================
+function insertPackage(req, res) {
 
-    db.query('Insert into packages(pname,no_of_test,test_id,fast,hp_id,reports,recommended,price) values(?,?,?,?,?,?,?,?)',
-        [pname,no_of_test,test_id,fast,hp_id,reports,recommended,price],
-        (err,result)=>
-        {
-            if(err)
-            {
-                return res.status(500).json(err)
+    const { pname, no_of_test, test_id, fast, hpid, reports, recommended, price } = req.body;
+
+    db.query(
+        `INSERT INTO packages 
+        (pname, no_of_test, test_id, fast, hpid, reports, recommended, price)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [pname, no_of_test, test_id, fast, hpid, reports, recommended, price],
+        (err) => {
+
+            if (err) {
+                return res.status(500).json(err);
             }
-            return res.json({Message:"Package Added",insertId:result.insertId})
+
+            return res.json({ Message: "Package Added Successfully" });
         }
-    )
+    );
 }
 
 
-// Update package
-function updatePackage(req,res)
-{
-    const {id}=req.params
-    const {pname,no_of_test,test_id,fast,hp_id,reports,recommended,price}=req.body
+// ================= UPDATE PACKAGE =================
+function updatePackage(req, res) {
 
-    db.query('Update packages set pname=?,no_of_test=?,test_id=?,fast=?,hp_id=?,reports=?,recommended=?,price=? where pid=?',
-        [pname,no_of_test,test_id,fast,hp_id,reports,recommended,price,id],
-        (err,result)=>
-        {
-            if(err)
-            {
-                return res.status(500).json(err)
+    const { id } = req.params;
+    const { pname, no_of_test, test_id, fast, hpid, reports, recommended, price } = req.body;
+
+    db.query(
+        `UPDATE packages 
+         SET pname=?, no_of_test=?, test_id=?, fast=?, hpid=?, reports=?, recommended=?, price=? 
+         WHERE pid=?`,
+        [pname, no_of_test, test_id, fast, hpid, reports, recommended, price, id],
+        (err) => {
+
+            if (err) {
+                return res.status(500).json(err);
             }
-            return res.json({Message:"Package Updated"})
+
+            return res.json({ Message: "Package Updated Successfully" });
         }
-    )
+    );
 }
 
 
-// Delete package
-function deletePackage(req,res)
-{
-    const {id}=req.params
-    db.query('Delete from packages where pid=?',[id],(err,result)=>
-    {
-        if(err)
-        {
-            return res.status(500).json(err)
+// ================= DELETE PACKAGE =================
+function deletePackage(req, res) {
+
+    const { id } = req.params;
+
+    db.query("DELETE FROM packages WHERE pid=?", [id], (err) => {
+
+        if (err) {
+            return res.status(500).json(err);
         }
-        return res.json({Message:"Package Deleted"})
-    })
+
+        return res.json({ Message: "Package Deleted Successfully" });
+    });
 }
 
 
-module.exports={
+module.exports = {
     getAllPackages,
     getPackageById,
     insertPackage,
     updatePackage,
     deletePackage
-}
+};

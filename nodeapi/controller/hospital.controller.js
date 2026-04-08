@@ -3,9 +3,19 @@ const db=require("../config/db")
 function getAllHp(req,res)
 {
     
-    db.query(`Select h.hpid,h.hpname,h.email,h.contact,h.hp_address,c.ctname from hospital as h
-        inner join city as c on h.ctid=c.ctid`,
-        (err,result)=>
+    db.query(`
+        select
+        h.hpid, 
+        h.hpname,
+        c.ctname,
+        h.hp_address,
+        h.email,
+        h.contact,
+        h.regno
+            from hospital as h
+            inner join city as c
+        on h.ctid = c.ctid
+        where h.isActive=1`,(err,result)=>
     {
         if(err)
         {
@@ -54,9 +64,10 @@ function insertHp(req,res)
 function updateHp(req,res)
 {
     const {id}=req.params
-    const {hp_name,ctid,hp_address,email,contact,regno,updatedon,updatedby,isActive}=req.body
-    db.query(`Update hospital set hpname=?,hp_address=?,email=?,contact=?,
-        regno=?,ctid=?,updatedon=?,updatedby=?,isActive=? where hpid=?`,[hp_name,ctid,hp_address,email,contact,regno,updatedon,updatedby,isActive,id],(err)=>
+   const { hpname, ctid, hp_address, email, contact, regno } = req.body
+db.query(
+  `UPDATE hospital SET hpname=?, hp_address=?, email=?, contact=?, regno=?, ctid=? WHERE hpid=?`,
+  [hpname, hp_address, email, contact, regno, ctid, id],(err)=>
     {
         if(err)
         {
@@ -70,7 +81,7 @@ function updateHp(req,res)
 function removeHp(req,res)
 {
     const {id}=req.params
-    db.query("Delete from hospital where hpid=?",[id],(err)=>
+    db.query("Update hospital set isActive=0 where hpid=?",[id],(err)=>
     {
         if(err)
         {
@@ -89,4 +100,3 @@ module.exports=
     updateHp,
     removeHp
 }
-//h.hp_address,h.email,h.contact,h.regno,
